@@ -42,23 +42,24 @@ class Cell:
 
 
 class Board:
-    def __init__(self, width, height, block_size, range_threshold=20):
+    def __init__(self, width, height, block_size, range_threshold=8):
         self.width = int(width)
         self.height = int(height)
         self.block_size = block_size
-        self.alive_cells = []
-        # self.alive_cells = self.generate_random_tuples()
+        # self.alive_cells = []
+        # self.alive_cells = self.generate_random_tuples(0.2)
+        self.alive_cells = [(0, 2), (1, 2), (2, 2), (2, 1), (1, 0), (1, 10), (2, 10), (3, 10), (3, 11), (2, 12)]
         self.alive_color = (0, 100, 0)
         self.dead_color = (0, 0, 0)
         self.range_threshold = range_threshold
 
-    def generate_random_tuples(self):
+    def generate_random_tuples(self, coverage=0.2):
         """
         Randomly populates the board
         """
         screen_height = self.height / self.block_size
         screen_width = self.width / self.block_size
-        alive_cells = round(screen_width * screen_height * 0.4)
+        alive_cells = round(screen_width * screen_height * coverage)
         random_tuples = [
             (
                 random.randint(0, round(screen_width)),
@@ -115,8 +116,7 @@ class Board:
         """
         x_boundaries = round(self.width / self.block_size + self.range_threshold)
         y_boundaries = round(self.height / self.block_size + self.range_threshold)
-        print(x_boundaries, y_boundaries)
-        if 0 <= cell.x <= x_boundaries - 1 and 0 <= cell.y <= y_boundaries - 1:
+        if -self.range_threshold <= cell.x <= x_boundaries - 1 and -self.range_threshold <= cell.y <= y_boundaries - 1:
             return True
         else:
             return False
@@ -170,7 +170,17 @@ class Board:
             print((cell.x, cell.y), self.within_range(cell))
         print("---")
 
+    def print_alive_cells(self):
+        """
+            Prints alive cells in terminal
+            For testing
+        """
+        print(self.alive_cells)
+
     def draw_board(self, screen):
+        """
+        Draw the board on a screen
+        """
         block_size = self.block_size
         for x in range(0, self.width, block_size):
             for y in range(0, self.height, block_size):
@@ -183,13 +193,5 @@ class Board:
                     surface.fill(self.dead_color)
                 screen.blit(surface, rect)
 
-
-# block_size = 20
-# width = 30
-# height = 20
-# board = Board(block_size * width, block_size * height, block_size, range_threshold=0)
-# cell = Cell(1, -1, -1)
-# print(board.within_range(cell))
-# print(board.range_threshold)
 
 
